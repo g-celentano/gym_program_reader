@@ -4,16 +4,16 @@ class Palette {
   static const MaterialColor primaryColor = MaterialColor(
     0xffdf8a30,
     <int, Color>{
-      50: Color(0xffc97c2b), //10%
-      100: Color(0xffb26e26), //20%
-      200: Color(0xff9c6122), //30%
-      300: Color(0xff86531d), //40%
-      400: Color(0xff704518), //50%
-      500: Color(0xff593713), //60%
-      600: Color(0xff43290e), //70%
-      700: Color(0xff2d1c0a), //80%
-      800: Color(0xff160e05), //90%
-      900: Color(0xff000000), //100%
+      50: Color.fromRGBO(223, 138, 48, 0.15), //10%
+      100: Color.fromRGBO(223, 138, 48, 0.25), //20%
+      200: Color.fromRGBO(223, 138, 48, 0.35), //30%
+      300: Color.fromRGBO(223, 138, 48, 0.45), //40%
+      400: Color.fromRGBO(223, 138, 48, 0.55), //50%
+      500: Color.fromRGBO(223, 138, 48, 0.65), //60%
+      600: Color.fromRGBO(223, 138, 48, 0.75), //70%
+      700: Color.fromRGBO(223, 138, 48, 0.85), //80%
+      800: Color.fromRGBO(223, 138, 48, 0.95), //90%
+      900: Color.fromRGBO(223, 138, 48, 1), //100%
     },
   );
   static const MaterialColor black = MaterialColor(
