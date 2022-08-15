@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class OrganizzaScheda extends StatefulWidget {
   const OrganizzaScheda({
     Key? key,
-    required this.scheda,
+    required this.giorni,
   }) : super(key: key);
 
-  final String scheda;
+  final List<String> giorni;
 
   @override
   State<OrganizzaScheda> createState() => _OrganizzaSchedaState();
@@ -15,11 +15,21 @@ class OrganizzaScheda extends StatefulWidget {
 class _OrganizzaSchedaState extends State<OrganizzaScheda> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 300,
-      height: 500,
-      color: Colors.amber,
-      child: Text(widget.scheda),
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: widget.giorni.length,
+        itemBuilder: ((context, index) => Card(
+              child: widget.giorni[index].isNotEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(widget.giorni[index].trim()),
+                    )
+                  : null,
+            )),
+      ),
     );
   }
 }

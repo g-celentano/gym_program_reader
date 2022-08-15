@@ -61,12 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
             height: MediaQuery.of(context).size.height,
             color: isDarkMode ? Palette.black.shade600 : Palette.white,
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Center(child: OrganizzaScheda(scheda: content)),
-            ],
-          ),
+          OrganizzaScheda(giorni: content.toUpperCase().split('GIORNO')),
         ]),
       ),
       floatingActionButton: FloatingActionButton(
