@@ -1,9 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'palette.dart';
-import 'package:file_picker/file_picker.dart';
-import 'components/organizza_scheda.dart';
 
 void main() {
   runApp(const MainPage());
@@ -61,23 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
             height: MediaQuery.of(context).size.height,
             color: isDarkMode ? Palette.black.shade600 : Palette.white,
           ),
-          OrganizzaScheda(giorni: content.toUpperCase().split('GIORNO')),
         ]),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          FilePickerResult? result = await FilePicker.platform.pickFiles();
-          if (result != null) {
-            scheda = File(result.files.single.path!);
-            final data = await scheda.readAsString(encoding: latin1);
-            setState(() {
-              content = data;
-            });
-          }
-        },
-        backgroundColor: Palette.primaryColor,
-        foregroundColor: Palette.black,
-        child: const Icon(Icons.add),
       ),
     );
   }
