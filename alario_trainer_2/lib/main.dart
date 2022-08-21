@@ -67,10 +67,11 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isDarkMode = false;
   bool systemSync = false;
   late File scheda;
-  List<String> content = List.empty(growable: true);
   List<List<String>> allenamenti = List.empty(growable: true);
   List<String> giorni = List.empty(growable: true);
   int selectedDay = 0;
+
+  int initialIndex = 0;
 
   @override
   void initState() {
@@ -84,9 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
     if (systemSync) {
       isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
     }
-    giorni = content
-        .where((element) => element.toUpperCase().contains('GIORNO'))
-        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -103,12 +101,12 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: giorni
             .map((element) => GestureDetector(
                   onTap: () => setState(() {
-                    selectedDay = giorni.toList().indexOf(element);
+                    selectedDay = giorni.indexOf(element);
                   }),
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: selectedDay == giorni.toList().indexOf(element)
+                      color: selectedDay == giorni.indexOf(element)
                           ? Palette.black.shade100
                           : Colors.transparent,
                     ),
@@ -136,7 +134,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Center(
             child: OrganizzaScehda(
-              content: content,
+              allenamento:
+                  allenamenti.isNotEmpty ? allenamenti[selectedDay] : [],
               isDarkMode: isDarkMode,
             ),
           ),
@@ -165,10 +164,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 if (result != null) {
                   scheda = File(result.files.single.path.toString());
-                  List<String> temp =
+                  giorni = List.empty(growable: true);
+                  allenamenti = List.empty(growable: true);
+                  List<String> content =
                       await scheda.readAsLines(encoding: latin1);
                   setState(() {
-                    content = temp;
+                    selectedDay = 0;
+                    giorni = content
+                        .where((element) =>
+                            element.toUpperCase().contains('GIORNO'))
+                        .toList();
+                    for (int i = 0; i < giorni.length; i++) {
+                      if (i != giorni.length - 1) {
+                        allenamenti.add(content.sublist(
+                            content.indexOf(giorni[i]),
+                            content.indexOf(giorni[i + 1])));
+                      } else {
+                        allenamenti
+                            .add(content.sublist(content.indexOf(giorni[i])));
+                      }
+                    }
                   });
                 }
               },
