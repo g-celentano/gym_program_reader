@@ -6,6 +6,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:ionicons/ionicons.dart';
 import 'palette.dart';
 import 'organizza_scheda.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 extension StringCasingExtension on String {
   String capitalize() =>
@@ -16,12 +17,23 @@ extension StringCasingExtension on String {
       .join(' ');
 }
 
-void main() {
-  runApp(const MainPage());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool darkModeSync = prefs.getBool("isDarkModeSynched") ?? false;
+  bool darkModeEnabled = prefs.getBool("isDarkModeEnabled") ?? false;
+  runApp(MainPage(
+    darkModeSync: darkModeSync,
+    darkModeEnabled: darkModeEnabled,
+  ));
 }
 
 class MainPage extends StatelessWidget {
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage(
+      {Key? key, required this.darkModeSync, required this.darkModeEnabled})
+      : super(key: key);
+  final bool darkModeSync;
+  final bool darkModeEnabled;
 
   // This widget is the root of your application.
   @override
@@ -32,31 +44,49 @@ class MainPage extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Palette.primaryColor,
       ),
-      home: const MyHomePage(),
+      home: MyHomePage(
+        darkModeSync: darkModeSync,
+        darkModeEnabled: darkModeEnabled,
+      ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage(
+      {Key? key, required this.darkModeSync, required this.darkModeEnabled})
+      : super(key: key);
+  final bool darkModeSync;
+  final bool darkModeEnabled;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late bool isDarkMode;
+  bool isDarkMode = false;
+  bool systemSync = false;
   late File scheda;
   List<String> content = List.empty(growable: true);
   List<List<String>> allenamenti = List.empty(growable: true);
-  Iterable<String> giorni = List.empty(growable: true);
+  List<String> giorni = List.empty(growable: true);
   int selectedDay = 0;
 
   @override
+  void initState() {
+    super.initState();
+    systemSync = widget.darkModeSync;
+    isDarkMode = widget.darkModeEnabled;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
-    giorni =
-        content.where((element) => element.toUpperCase().contains('GIORNO'));
+    if (systemSync) {
+      isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    }
+    giorni = content
+        .where((element) => element.toUpperCase().contains('GIORNO'))
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -115,14 +145,20 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
         backgroundColor: Palette.primaryColor,
-        overlayColor:
-            isDarkMode ? Palette.black.shade50 : Palette.white.shade50,
+        foregroundColor: isDarkMode ? Palette.black : Palette.white,
+        overlayColor: isDarkMode ? Palette.black : Palette.white,
         spaceBetweenChildren: 20,
         children: [
           SpeedDialChild(
               label: 'Carica Scheda',
-              labelBackgroundColor: Palette.primaryColor,
+              labelShadow:
+                  isDarkMode ? null : const [BoxShadow(color: Palette.white)],
+              labelBackgroundColor:
+                  isDarkMode ? Palette.primaryColor : Colors.transparent,
               labelStyle: const TextStyle(fontSize: 16, color: Palette.black),
+              backgroundColor:
+                  isDarkMode ? Palette.white : Palette.primaryColor,
+              foregroundColor: isDarkMode ? Palette.black : Palette.white,
               onTap: () async {
                 FilePickerResult? result =
                     await FilePicker.platform.pickFiles();
@@ -142,13 +178,92 @@ class _MyHomePageState extends State<MyHomePage> {
               )),
           SpeedDialChild(
               label: 'Esercizio Occasionale',
-              labelBackgroundColor: Palette.primaryColor,
+              labelShadow:
+                  isDarkMode ? null : const [BoxShadow(color: Palette.white)],
+              labelBackgroundColor:
+                  isDarkMode ? Palette.primaryColor : Colors.transparent,
               labelStyle: const TextStyle(fontSize: 16, color: Palette.black),
+              backgroundColor:
+                  isDarkMode ? Palette.white : Palette.primaryColor,
+              foregroundColor: isDarkMode ? Palette.black : Palette.white,
               onTap: () {},
               child: const Icon(
                 Ionicons.barbell,
                 size: 30,
               )),
+          SpeedDialChild(
+            label: 'Aspetto',
+            labelShadow:
+                isDarkMode ? null : const [BoxShadow(color: Palette.white)],
+            labelBackgroundColor:
+                isDarkMode ? Palette.primaryColor : Colors.transparent,
+            labelStyle: const TextStyle(fontSize: 16, color: Palette.black),
+            child: SpeedDial(
+              spaceBetweenChildren: 20,
+              backgroundColor:
+                  isDarkMode ? Palette.white : Palette.primaryColor,
+              foregroundColor: isDarkMode ? Palette.black : Palette.white,
+              icon: Ionicons.eye,
+              iconTheme: const IconThemeData(size: 30),
+              children: [
+                SpeedDialChild(
+                    label: 'Light/Dark Mode',
+                    labelShadow: isDarkMode
+                        ? null
+                        : const [BoxShadow(color: Palette.white)],
+                    labelBackgroundColor:
+                        isDarkMode ? Palette.primaryColor : Colors.transparent,
+                    labelStyle:
+                        const TextStyle(fontSize: 16, color: Palette.black),
+                    backgroundColor:
+                        isDarkMode ? Palette.white : Palette.primaryColor,
+                    foregroundColor: isDarkMode ? Palette.black : Palette.white,
+                    onTap: () async {
+                      setState(() {
+                        isDarkMode = !isDarkMode;
+                      });
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setBool("isDarkModeEnabled", isDarkMode);
+                    },
+                    child: Icon(
+                      isDarkMode ? Ionicons.moon : Ionicons.sunny,
+                      size: 30,
+                    )),
+                SpeedDialChild(
+                    label: 'Sincronizza Col Telefono',
+                    labelShadow: isDarkMode
+                        ? null
+                        : const [BoxShadow(color: Palette.white)],
+                    labelBackgroundColor:
+                        isDarkMode ? Palette.primaryColor : Colors.transparent,
+                    labelStyle:
+                        const TextStyle(fontSize: 16, color: Palette.black),
+                    backgroundColor:
+                        isDarkMode ? Palette.white : Palette.primaryColor,
+                    foregroundColor: isDarkMode ? Palette.black : Palette.white,
+                    onTap: () async {
+                      setState(() {
+                        systemSync = !systemSync;
+                      });
+                      final prefs = await SharedPreferences.getInstance();
+                      if (systemSync) {
+                        prefs.setBool('isDarkModeSynched', true);
+                        setState(() {
+                          isDarkMode =
+                              MediaQuery.of(context).platformBrightness ==
+                                  Brightness.dark;
+                        });
+                      } else {
+                        prefs.setBool('isDarkModeSynched', false);
+                      }
+                    },
+                    child: Icon(
+                      systemSync ? Ionicons.checkmark : Ionicons.close,
+                      size: 30,
+                    )),
+              ],
+            ),
+          )
         ],
       ),
     );

@@ -13,7 +13,10 @@ import 'package:alario_trainer_2/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MainPage());
+    await tester.pumpWidget(const MainPage(
+      darkModeEnabled: false,
+      darkModeSync: false,
+    ));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
