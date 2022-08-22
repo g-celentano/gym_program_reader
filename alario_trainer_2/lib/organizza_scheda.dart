@@ -1,6 +1,7 @@
 import 'package:alario_trainer_2/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:flutter/cupertino.dart';
 
 class OrganizzaScehda extends StatefulWidget {
   const OrganizzaScehda({
@@ -19,7 +20,9 @@ class OrganizzaScehda extends StatefulWidget {
 class OrganizzaScehdaState extends State<OrganizzaScehda> {
   List<String> esercizi = List.empty(growable: true);
   ScrollController controller = ScrollController();
+
   int indexOnScreen = 0;
+  int timer = 15;
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +40,8 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                   left: 0,
                   right: 0,
                   child: SizedBox(
-                    // color: Colors.amber,
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height / 1.2,
-                    // height: double.infinity,
                     child: ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         controller: controller,
@@ -49,22 +50,82 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                         shrinkWrap: true,
                         itemBuilder: (context, index) => SizedBox(
                               width: MediaQuery.of(context).size.width,
-                              child: Column(
+                              child:
+                                  //* schermata che cambia
+                                  Column(
                                 children: [
-                                  Text(
-                                    esercizi[index],
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 30,
-                                        color: widget.isDarkMode
-                                            ? Palette.white
-                                            : Palette.black),
+                                  //* esercizio
+                                  SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width - 100,
+                                    child: Text(
+                                      esercizi[index],
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 27,
+                                          color: widget.isDarkMode
+                                              ? Palette.white
+                                              : Palette.black),
+                                    ),
                                   ),
+                                  //* timer button
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.065,
+                                    decoration: BoxDecoration(
+                                        color: widget.isDarkMode
+                                            ? Palette.primaryColor
+                                            : Palette.black,
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () => setState(() {
+                                            timer > 15 ? timer -= 15 : null;
+                                          }),
+                                          child: const Icon(
+                                            Ionicons.remove,
+                                            size: 25,
+                                          ),
+                                        ),
+                                        //* testo timer
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              6,
+                                          child: Center(
+                                            child: Text(_getTimerText(),
+                                                style: const TextStyle(
+                                                    fontSize: 20)),
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () => setState(() {
+                                            timer < 600 ? timer += 15 : null;
+                                          }),
+                                          child: const Icon(
+                                            Ionicons.add,
+                                            size: 25,
+                                          ),
+                                        ),
+                                        const Icon(
+                                          Ionicons.play,
+                                          size: 25,
+                                        )
+                                      ],
+                                    ),
+                                  )
                                 ],
                               ),
                             )),
                   ),
                 ),
+                //* icona per tornare indietro con gli esercizi
                 Positioned(
                   left: 0,
                   child: SizedBox(
@@ -80,8 +141,8 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                       indexOnScreen *
                                           MediaQuery.of(context).size.width,
                                       duration:
-                                          const Duration(milliseconds: 150),
-                                      curve: Curves.easeIn);
+                                          const Duration(milliseconds: 200),
+                                      curve: Curves.easeInOut);
                                 }
                               });
                             },
@@ -99,6 +160,8 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                           ),
                   ),
                 ),
+
+                //* icona per andare avanti con gli esercizi
                 Positioned(
                   right: 0,
                   child: SizedBox(
@@ -114,8 +177,8 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                       indexOnScreen *
                                           MediaQuery.of(context).size.width,
                                       duration:
-                                          const Duration(milliseconds: 150),
-                                      curve: Curves.easeIn);
+                                          const Duration(milliseconds: 200),
+                                      curve: Curves.easeInOut);
                                 }
                               });
                             },
@@ -143,5 +206,21 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                   color: widget.isDarkMode ? Palette.white : Palette.black),
             )),
     );
+  }
+
+  String _getTimerText() {
+    String temp = '';
+    if (timer < 60) {
+      temp = '00:$timer';
+    } else {
+      int min = timer ~/ 60;
+      int sec = timer % 60;
+      if (sec < 10) {
+        min < 10 ? temp = '0$min:0$sec' : temp = '$min:0$sec';
+      } else {
+        min < 10 ? temp = '0$min:$sec' : temp = '$min:$sec';
+      }
+    }
+    return temp;
   }
 }

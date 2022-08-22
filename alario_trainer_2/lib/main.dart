@@ -191,21 +191,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 Ionicons.document_outline,
                 size: 30,
               )),
-          SpeedDialChild(
-              label: 'Esercizio Occasionale',
-              labelShadow:
-                  isDarkMode ? null : const [BoxShadow(color: Palette.white)],
-              labelBackgroundColor:
-                  isDarkMode ? Palette.primaryColor : Colors.transparent,
-              labelStyle: const TextStyle(fontSize: 16, color: Palette.black),
-              backgroundColor:
-                  isDarkMode ? Palette.white : Palette.primaryColor,
-              foregroundColor: isDarkMode ? Palette.black : Palette.white,
-              onTap: () {},
-              child: const Icon(
-                Ionicons.barbell,
-                size: 30,
-              )),
+          // SpeedDialChild(
+          //     label: 'Esercizio Occasionale',
+          //     labelShadow:
+          //         isDarkMode ? null : const [BoxShadow(color: Palette.white)],
+          //     labelBackgroundColor:
+          //         isDarkMode ? Palette.primaryColor : Colors.transparent,
+          //     labelStyle: const TextStyle(fontSize: 16, color: Palette.black),
+          //     backgroundColor:
+          //         isDarkMode ? Palette.white : Palette.primaryColor,
+          //     foregroundColor: isDarkMode ? Palette.black : Palette.white,
+          //     onTap: () {},
+          //     child: const Icon(
+          //       Ionicons.barbell,
+          //       size: 30,
+          //     )),
           SpeedDialChild(
             label: 'Aspetto',
             labelShadow:
