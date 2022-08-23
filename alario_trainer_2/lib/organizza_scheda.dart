@@ -49,75 +49,42 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                         itemCount: esercizi.length,
                         shrinkWrap: true,
                         itemBuilder: (context, index) => SizedBox(
+                              // color: Colors.amber,
                               width: MediaQuery.of(context).size.width,
                               child:
                                   //* schermata che cambia
                                   Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  //* esercizio
                                   SizedBox(
+                                    // color: Colors.red,
                                     width:
                                         MediaQuery.of(context).size.width - 100,
-                                    child: Text(
-                                      esercizi[index],
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 27,
-                                          color: widget.isDarkMode
-                                              ? Palette.white
-                                              : Palette.black),
+                                    height:
+                                        MediaQuery.of(context).size.height / 10,
+                                    child: SingleChildScrollView(
+                                      child: Text(
+                                        esercizi[index],
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 27,
+                                            color: widget.isDarkMode
+                                                ? Palette.white
+                                                : Palette.black),
+                                      ),
                                     ),
                                   ),
-                                  //* timer button
                                   Container(
+                                    margin: const EdgeInsets.only(bottom: 100),
+                                    color: Colors.red,
                                     width:
-                                        MediaQuery.of(context).size.width / 2,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.065,
-                                    decoration: BoxDecoration(
-                                        color: widget.isDarkMode
-                                            ? Palette.primaryColor
-                                            : Palette.black,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () => setState(() {
-                                            timer > 15 ? timer -= 15 : null;
-                                          }),
-                                          child: const Icon(
-                                            Ionicons.remove,
-                                            size: 25,
-                                          ),
-                                        ),
-                                        //* testo timer
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              6,
-                                          child: Center(
-                                            child: Text(_getTimerText(),
-                                                style: const TextStyle(
-                                                    fontSize: 20)),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () => setState(() {
-                                            timer < 600 ? timer += 15 : null;
-                                          }),
-                                          child: const Icon(
-                                            Ionicons.add,
-                                            size: 25,
-                                          ),
-                                        ),
-                                        const Icon(
-                                          Ionicons.play,
-                                          size: 25,
-                                        )
-                                      ],
+                                        MediaQuery.of(context).size.width - 130,
+                                    height:
+                                        MediaQuery.of(context).size.height / 2,
+                                    child: const Center(
+                                      child: Text(
+                                          'spazio per il salvataggio dei carichi'),
                                     ),
                                   )
                                 ],
@@ -146,12 +113,10 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                 }
                               });
                             },
-                            child: Icon(
+                            child: const Icon(
                               Ionicons.chevron_back,
                               size: 50,
-                              color: widget.isDarkMode
-                                  ? Palette.primaryColor
-                                  : Palette.black,
+                              color: Palette.primaryColor,
                             ),
                           )
                         : const SizedBox(
@@ -160,6 +125,67 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                           ),
                   ),
                 ),
+                Positioned(
+                    top: MediaQuery.of(context).size.height / 10,
+                    left: MediaQuery.of(context).size.width / 2 -
+                        MediaQuery.of(context).size.width / 4 -
+                        15,
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Center(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width / 2,
+                          height: MediaQuery.of(context).size.height * 0.065,
+                          decoration: BoxDecoration(
+                              color: Palette.primaryColor,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              GestureDetector(
+                                onTap: () => setState(() {
+                                  timer > 15 ? timer -= 15 : null;
+                                }),
+                                child: Icon(
+                                  Ionicons.remove,
+                                  size: 25,
+                                  color: widget.isDarkMode
+                                      ? Palette.black
+                                      : Palette.white,
+                                ),
+                              ),
+                              //* testo timer
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 6,
+                                child: Center(
+                                  child: Text(_getTimerText(),
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: widget.isDarkMode
+                                              ? Palette.black
+                                              : Palette.white)),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => setState(() {
+                                  timer < 600 ? timer += 15 : null;
+                                }),
+                                child: Icon(Ionicons.add,
+                                    size: 25,
+                                    color: widget.isDarkMode
+                                        ? Palette.black
+                                        : Palette.white),
+                              ),
+                              Icon(Ionicons.play,
+                                  size: 25,
+                                  color: widget.isDarkMode
+                                      ? Palette.black
+                                      : Palette.white)
+                            ],
+                          ),
+                        ),
+                      ),
+                    )),
 
                 //* icona per andare avanti con gli esercizi
                 Positioned(
@@ -182,11 +208,9 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                 }
                               });
                             },
-                            child: Icon(
+                            child: const Icon(
                               Ionicons.chevron_forward,
-                              color: widget.isDarkMode
-                                  ? Palette.primaryColor
-                                  : Palette.black,
+                              color: Palette.primaryColor,
                               size: 50,
                             ),
                           )

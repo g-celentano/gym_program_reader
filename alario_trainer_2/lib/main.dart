@@ -7,6 +7,7 @@ import 'package:ionicons/ionicons.dart';
 import 'palette.dart';
 import 'organizza_scheda.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
 
 extension StringCasingExtension on String {
   String capitalize() =>
@@ -78,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     systemSync = widget.darkModeSync;
     isDarkMode = widget.darkModeEnabled;
+    controllaSchedaSalvata();
   }
 
   @override
@@ -164,10 +166,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 if (result != null) {
                   scheda = File(result.files.single.path.toString());
+
                   giorni = List.empty(growable: true);
                   allenamenti = List.empty(growable: true);
                   List<String> content =
                       await scheda.readAsLines(encoding: latin1);
+                  saveFile(content);
                   setState(() {
                     selectedDay = 0;
                     giorni = content
@@ -215,6 +219,8 @@ class _MyHomePageState extends State<MyHomePage> {
             labelStyle: const TextStyle(fontSize: 16, color: Palette.black),
             child: SpeedDial(
               spaceBetweenChildren: 20,
+              overlayColor: isDarkMode ? Palette.black : Palette.white,
+              overlayOpacity: 0.2,
               backgroundColor:
                   isDarkMode ? Palette.white : Palette.primaryColor,
               foregroundColor: isDarkMode ? Palette.black : Palette.white,
@@ -282,5 +288,49 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+
+  void saveFile(List<String> content) async {
+    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    String appDocumentsPath = appDocumentsDirectory.path;
+    String filePath = '$appDocumentsPath/schedaSalvata.txt';
+    File file = File(filePath);
+    String saveableContent = '';
+    for (String element in content) {
+      if (element.isNotEmpty) {
+        saveableContent += '$element\n';
+      }
+    }
+    file.writeAsString(saveableContent).then(
+        (value) => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Scheda Aggiunta'),
+              duration: Duration(milliseconds: 500),
+            )));
+  }
+
+  void controllaSchedaSalvata() async {
+    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    String appDocumentsPath = appDocumentsDirectory.path;
+    String filePath = '$appDocumentsPath/schedaSalvata.txt';
+
+    scheda = File(filePath);
+
+    List<String> content = await scheda.readAsLines(encoding: latin1);
+
+    setState(() {
+      selectedDay = 0;
+      giorni = content
+          .where((element) => element.toUpperCase().contains('GIORNO'))
+          .toList();
+
+      for (int i = 0; i < giorni.length; i++) {
+        if (i != giorni.length - 1) {
+          allenamenti.add(content.sublist(
+              content.indexOf(giorni[i]), content.indexOf(giorni[i + 1])));
+        } else {
+          allenamenti.add(content.sublist(content.indexOf(giorni[i])));
+        }
+      }
+    });
   }
 }
