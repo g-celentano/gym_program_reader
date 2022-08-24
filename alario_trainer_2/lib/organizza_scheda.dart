@@ -1,7 +1,7 @@
 import 'package:alario_trainer_2/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:flutter/cupertino.dart';
+import 'timer_page.dart';
 
 class OrganizzaScehda extends StatefulWidget {
   const OrganizzaScehda({
@@ -22,6 +22,13 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
   ScrollController controller = ScrollController();
 
   int indexOnScreen = 0;
+  int numSettimane = 1;
+  // List<Map<String, String>> controllerSettimane = List.filled(
+  //     1,
+  //     {
+  //       "Carico Settimana ": '',
+  //     },
+  //     growable: true);
   int timer = 15;
 
   @override
@@ -76,17 +83,36 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                     ),
                                   ),
                                   Container(
-                                    margin: const EdgeInsets.only(bottom: 100),
-                                    color: Colors.red,
-                                    width:
-                                        MediaQuery.of(context).size.width - 130,
-                                    height:
-                                        MediaQuery.of(context).size.height / 2,
-                                    child: const Center(
-                                      child: Text(
-                                          'spazio per il salvataggio dei carichi'),
-                                    ),
-                                  )
+                                      margin:
+                                          const EdgeInsets.only(bottom: 100),
+                                      // color: Colors.red.withOpacity(0.2),
+                                      width: MediaQuery.of(context).size.width -
+                                          130,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              2,
+                                      child: SizedBox(
+                                        // color: Colors.amber,
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                2.3,
+                                        child: ListView.builder(
+                                          itemCount: numSettimane,
+                                          itemBuilder: (context, index) =>
+                                              TextField(
+                                            textAlign: TextAlign.center,
+                                            decoration: InputDecoration(
+                                                hintStyle: TextStyle(
+                                                    color: widget.isDarkMode
+                                                        ? Palette.white.shade300
+                                                        : null),
+                                                hintText:
+                                                    'Carico Settimana ${index + 1}'
+                                                //! vedere come fare una lista di controller
+                                                ),
+                                          ),
+                                        ),
+                                      ))
                                 ],
                               ),
                             )),
@@ -125,6 +151,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                           ),
                   ),
                 ),
+                //* timerBtn
                 Positioned(
                     top: MediaQuery.of(context).size.height / 10,
                     left: MediaQuery.of(context).size.width / 2 -
@@ -176,11 +203,21 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                         ? Palette.black
                                         : Palette.white),
                               ),
-                              Icon(Ionicons.play,
-                                  size: 25,
-                                  color: widget.isDarkMode
-                                      ? Palette.black
-                                      : Palette.white)
+                              GestureDetector(
+                                onTap: () => Navigator.of(context)
+                                    .push(MaterialPageRoute(
+                                        builder: (context) => TimerPage(
+                                              isDarkMode: widget.isDarkMode,
+                                              esercizio:
+                                                  esercizi[indexOnScreen],
+                                              time: timer,
+                                            ))),
+                                child: Icon(Ionicons.play,
+                                    size: 25,
+                                    color: widget.isDarkMode
+                                        ? Palette.black
+                                        : Palette.white),
+                              )
                             ],
                           ),
                         ),
@@ -220,6 +257,46 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                           ),
                   ),
                 ),
+                Positioned(
+                    child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 100),
+                    // color: Colors.amber,
+                    width: MediaQuery.of(context).size.width / 1.5,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ElevatedButton(
+                            onPressed: () => setState(() {
+                                  numSettimane++;
+                                }),
+                            style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 25, vertical: 10)),
+                            child: Icon(
+                              Ionicons.add,
+                              size: 30,
+                              color: widget.isDarkMode
+                                  ? Palette.black
+                                  : Palette.white,
+                            )),
+                        ElevatedButton(
+                            onPressed: () => {},
+                            style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 25, vertical: 10)),
+                            child: Icon(
+                              Ionicons.checkmark,
+                              size: 30,
+                              color: widget.isDarkMode
+                                  ? Palette.black
+                                  : Palette.white,
+                            )),
+                      ],
+                    ),
+                  ),
+                ))
               ],
             )
           : Center(

@@ -315,22 +315,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
     scheda = File(filePath);
 
-    List<String> content = await scheda.readAsLines(encoding: latin1);
+    if (await scheda.exists()) {
+      List<String> content = await scheda.readAsLines(encoding: latin1);
+      setState(() {
+        selectedDay = 0;
+        giorni = content
+            .where((element) => element.toUpperCase().contains('GIORNO'))
+            .toList();
 
-    setState(() {
-      selectedDay = 0;
-      giorni = content
-          .where((element) => element.toUpperCase().contains('GIORNO'))
-          .toList();
-
-      for (int i = 0; i < giorni.length; i++) {
-        if (i != giorni.length - 1) {
-          allenamenti.add(content.sublist(
-              content.indexOf(giorni[i]), content.indexOf(giorni[i + 1])));
-        } else {
-          allenamenti.add(content.sublist(content.indexOf(giorni[i])));
+        for (int i = 0; i < giorni.length; i++) {
+          if (i != giorni.length - 1) {
+            allenamenti.add(content.sublist(
+                content.indexOf(giorni[i]), content.indexOf(giorni[i + 1])));
+          } else {
+            allenamenti.add(content.sublist(content.indexOf(giorni[i])));
+          }
         }
-      }
-    });
+      });
+    }
   }
 }
