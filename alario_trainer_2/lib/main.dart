@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late File scheda;
   List<List<String>> allenamenti = List.empty(growable: true);
   List<String> giorni = List.empty(growable: true);
-  int selectedDay = 0;
+  ValueNotifier<int> selectedDay = ValueNotifier(0);
 
   int initialIndex = 0;
 
@@ -103,12 +103,12 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: giorni
             .map((element) => GestureDetector(
                   onTap: () => setState(() {
-                    selectedDay = giorni.indexOf(element);
+                    selectedDay.value = giorni.indexOf(element);
                   }),
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: selectedDay == giorni.indexOf(element)
+                      color: selectedDay.value == giorni.indexOf(element)
                           ? Palette.black.shade100
                           : Colors.transparent,
                     ),
@@ -136,99 +136,25 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Center(
             child: OrganizzaScehda(
+              selectedDay: selectedDay,
               allenamento:
-                  allenamenti.isNotEmpty ? allenamenti[selectedDay] : [],
+                  allenamenti.isNotEmpty ? allenamenti[selectedDay.value] : [],
               isDarkMode: isDarkMode,
             ),
           ),
-        ]),
-      ),
-      floatingActionButton: SpeedDial(
-        animatedIcon: AnimatedIcons.menu_close,
-        backgroundColor: Palette.primaryColor,
-        foregroundColor: isDarkMode ? Palette.black : Palette.white,
-        overlayColor: isDarkMode ? Palette.black : Palette.white,
-        spaceBetweenChildren: 20,
-        children: [
-          SpeedDialChild(
-              label: 'Carica Scheda',
-              labelShadow:
-                  isDarkMode ? null : const [BoxShadow(color: Palette.white)],
-              labelBackgroundColor:
-                  isDarkMode ? Palette.primaryColor : Colors.transparent,
-              labelStyle: const TextStyle(fontSize: 16, color: Palette.black),
-              backgroundColor:
-                  isDarkMode ? Palette.white : Palette.primaryColor,
-              foregroundColor: isDarkMode ? Palette.black : Palette.white,
-              onTap: () async {
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles();
-
-                if (result != null) {
-                  scheda = File(result.files.single.path.toString());
-
-                  giorni = List.empty(growable: true);
-                  allenamenti = List.empty(growable: true);
-                  List<String> content =
-                      await scheda.readAsLines(encoding: latin1);
-                  saveFile(content);
-                  setState(() {
-                    selectedDay = 0;
-                    giorni = content
-                        .where((element) =>
-                            element.toUpperCase().contains('GIORNO'))
-                        .toList();
-                    for (int i = 0; i < giorni.length; i++) {
-                      if (i != giorni.length - 1) {
-                        allenamenti.add(content.sublist(
-                            content.indexOf(giorni[i]),
-                            content.indexOf(giorni[i + 1])));
-                      } else {
-                        allenamenti
-                            .add(content.sublist(content.indexOf(giorni[i])));
-                      }
-                    }
-                  });
-                }
-              },
-              child: const Icon(
-                Ionicons.document_outline,
-                size: 30,
-              )),
-          // SpeedDialChild(
-          //     label: 'Esercizio Occasionale',
-          //     labelShadow:
-          //         isDarkMode ? null : const [BoxShadow(color: Palette.white)],
-          //     labelBackgroundColor:
-          //         isDarkMode ? Palette.primaryColor : Colors.transparent,
-          //     labelStyle: const TextStyle(fontSize: 16, color: Palette.black),
-          //     backgroundColor:
-          //         isDarkMode ? Palette.white : Palette.primaryColor,
-          //     foregroundColor: isDarkMode ? Palette.black : Palette.white,
-          //     onTap: () {},
-          //     child: const Icon(
-          //       Ionicons.barbell,
-          //       size: 30,
-          //     )),
-          SpeedDialChild(
-            label: 'Aspetto',
-            labelShadow:
-                isDarkMode ? null : const [BoxShadow(color: Palette.white)],
-            labelBackgroundColor:
-                isDarkMode ? Palette.primaryColor : Colors.transparent,
-            labelStyle: const TextStyle(fontSize: 16, color: Palette.black),
+          Positioned(
+            right: MediaQuery.of(context).size.width * 0.05,
+            top: MediaQuery.of(context).size.height * 0.75,
             child: SpeedDial(
-              spaceBetweenChildren: 20,
-              overlayColor: isDarkMode ? Palette.black : Palette.white,
-              overlayOpacity: 0.2,
-              backgroundColor:
-                  isDarkMode ? Palette.white : Palette.primaryColor,
+              animatedIcon: AnimatedIcons.menu_close,
+              backgroundColor: Palette.primaryColor,
               foregroundColor: isDarkMode ? Palette.black : Palette.white,
-              icon: Ionicons.eye,
-              iconTheme: const IconThemeData(size: 30),
+              overlayColor: isDarkMode ? Palette.black : Palette.white,
+              spaceBetweenChildren: 20,
               children: [
+                //* speed dial option per caricare scheda
                 SpeedDialChild(
-                    label: 'Light/Dark Mode',
+                    label: 'Carica Scheda',
                     labelShadow: isDarkMode
                         ? null
                         : const [BoxShadow(color: Palette.white)],
@@ -240,52 +166,142 @@ class _MyHomePageState extends State<MyHomePage> {
                         isDarkMode ? Palette.white : Palette.primaryColor,
                     foregroundColor: isDarkMode ? Palette.black : Palette.white,
                     onTap: () async {
-                      setState(() {
-                        isDarkMode = !isDarkMode;
-                      });
-                      final prefs = await SharedPreferences.getInstance();
-                      prefs.setBool("isDarkModeEnabled", isDarkMode);
-                    },
-                    child: Icon(
-                      isDarkMode ? Ionicons.moon : Ionicons.sunny,
-                      size: 30,
-                    )),
-                SpeedDialChild(
-                    label: 'Sincronizza Col Telefono',
-                    labelShadow: isDarkMode
-                        ? null
-                        : const [BoxShadow(color: Palette.white)],
-                    labelBackgroundColor:
-                        isDarkMode ? Palette.primaryColor : Colors.transparent,
-                    labelStyle:
-                        const TextStyle(fontSize: 16, color: Palette.black),
-                    backgroundColor:
-                        isDarkMode ? Palette.white : Palette.primaryColor,
-                    foregroundColor: isDarkMode ? Palette.black : Palette.white,
-                    onTap: () async {
-                      setState(() {
-                        systemSync = !systemSync;
-                      });
-                      final prefs = await SharedPreferences.getInstance();
-                      if (systemSync) {
-                        prefs.setBool('isDarkModeSynched', true);
+                      FilePickerResult? result =
+                          await FilePicker.platform.pickFiles();
+
+                      if (result != null) {
+                        scheda = File(result.files.single.path.toString());
+
+                        giorni = List.empty(growable: true);
+                        allenamenti = List.empty(growable: true);
+                        List<String> content =
+                            await scheda.readAsLines(encoding: latin1);
+                        saveFile(content);
                         setState(() {
-                          isDarkMode =
-                              MediaQuery.of(context).platformBrightness ==
-                                  Brightness.dark;
+                          selectedDay.value = 0;
+                          giorni = content
+                              .where((element) =>
+                                  element.toUpperCase().contains('GIORNO'))
+                              .toList();
+                          for (int i = 0; i < giorni.length; i++) {
+                            if (i != giorni.length - 1) {
+                              allenamenti.add(content.sublist(
+                                  content.indexOf(giorni[i]),
+                                  content.indexOf(giorni[i + 1])));
+                            } else {
+                              allenamenti.add(
+                                  content.sublist(content.indexOf(giorni[i])));
+                            }
+                          }
                         });
-                      } else {
-                        prefs.setBool('isDarkModeSynched', false);
                       }
                     },
-                    child: Icon(
-                      systemSync ? Ionicons.checkmark : Ionicons.close,
+                    child: const Icon(
+                      Ionicons.document_outline,
                       size: 30,
                     )),
+                // * speed dial option per mettere esercizio occasionale
+                // SpeedDialChild(
+                //     label: 'Esercizio Occasionale',
+                //     labelShadow:
+                //         isDarkMode ? null : const [BoxShadow(color: Palette.white)],
+                //     labelBackgroundColor:
+                //         isDarkMode ? Palette.primaryColor : Colors.transparent,
+                //     labelStyle: const TextStyle(fontSize: 16, color: Palette.black),
+                //     backgroundColor:
+                //         isDarkMode ? Palette.white : Palette.primaryColor,
+                //     foregroundColor: isDarkMode ? Palette.black : Palette.white,
+                //     onTap: () {},
+                //     child: const Icon(
+                //       Ionicons.barbell,
+                //       size: 30,
+                //     )),
+                //* speedial per l'aspetto
+                SpeedDialChild(
+                  label: 'Aspetto',
+                  labelShadow: isDarkMode
+                      ? null
+                      : const [BoxShadow(color: Palette.white)],
+                  labelBackgroundColor:
+                      isDarkMode ? Palette.primaryColor : Colors.transparent,
+                  labelStyle:
+                      const TextStyle(fontSize: 16, color: Palette.black),
+                  child: SpeedDial(
+                    spaceBetweenChildren: 20,
+                    overlayColor: isDarkMode ? Palette.black : Palette.white,
+                    overlayOpacity: 0.2,
+                    backgroundColor:
+                        isDarkMode ? Palette.white : Palette.primaryColor,
+                    foregroundColor: isDarkMode ? Palette.black : Palette.white,
+                    icon: Ionicons.eye,
+                    iconTheme: const IconThemeData(size: 30),
+                    children: [
+                      SpeedDialChild(
+                          label: 'Light/Dark Mode',
+                          labelShadow: isDarkMode
+                              ? null
+                              : const [BoxShadow(color: Palette.white)],
+                          labelBackgroundColor: isDarkMode
+                              ? Palette.primaryColor
+                              : Colors.transparent,
+                          labelStyle: const TextStyle(
+                              fontSize: 16, color: Palette.black),
+                          backgroundColor:
+                              isDarkMode ? Palette.white : Palette.primaryColor,
+                          foregroundColor:
+                              isDarkMode ? Palette.black : Palette.white,
+                          onTap: () async {
+                            setState(() {
+                              isDarkMode = !isDarkMode;
+                            });
+                            final prefs = await SharedPreferences.getInstance();
+                            prefs.setBool("isDarkModeEnabled", isDarkMode);
+                          },
+                          child: Icon(
+                            isDarkMode ? Ionicons.moon : Ionicons.sunny,
+                            size: 30,
+                          )),
+                      SpeedDialChild(
+                          label: 'Sincronizza Col Telefono',
+                          labelShadow: isDarkMode
+                              ? null
+                              : const [BoxShadow(color: Palette.white)],
+                          labelBackgroundColor: isDarkMode
+                              ? Palette.primaryColor
+                              : Colors.transparent,
+                          labelStyle: const TextStyle(
+                              fontSize: 16, color: Palette.black),
+                          backgroundColor:
+                              isDarkMode ? Palette.white : Palette.primaryColor,
+                          foregroundColor:
+                              isDarkMode ? Palette.black : Palette.white,
+                          onTap: () async {
+                            setState(() {
+                              systemSync = !systemSync;
+                            });
+                            final prefs = await SharedPreferences.getInstance();
+                            if (systemSync) {
+                              prefs.setBool('isDarkModeSynched', true);
+                              setState(() {
+                                isDarkMode =
+                                    MediaQuery.of(context).platformBrightness ==
+                                        Brightness.dark;
+                              });
+                            } else {
+                              prefs.setBool('isDarkModeSynched', false);
+                            }
+                          },
+                          child: Icon(
+                            systemSync ? Ionicons.checkmark : Ionicons.close,
+                            size: 30,
+                          )),
+                    ],
+                  ),
+                )
               ],
             ),
-          )
-        ],
+          ),
+        ]),
       ),
     );
   }
@@ -318,7 +334,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (await scheda.exists()) {
       List<String> content = await scheda.readAsLines(encoding: latin1);
       setState(() {
-        selectedDay = 0;
+        selectedDay.value = 0;
         giorni = content
             .where((element) => element.toUpperCase().contains('GIORNO'))
             .toList();

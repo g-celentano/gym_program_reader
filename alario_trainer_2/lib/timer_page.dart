@@ -22,11 +22,12 @@ class TimerPage extends StatefulWidget {
 class TimerState extends State<TimerPage> {
   bool timerStarted = false;
   String timerText = '';
-  int timer = 0;
+  ValueNotifier<int> timer = ValueNotifier(0);
+  late Timer t;
 
   @override
   void initState() {
-    timer = widget.time;
+    timer.value = widget.time;
     startTimer();
     super.initState();
   }
@@ -35,11 +36,14 @@ class TimerState extends State<TimerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: MediaQuery.of(context).size.width / 4,
+        leadingWidth: MediaQuery.of(context).size.width * 0.25,
         leading: Row(
           children: [
             GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
+              onTap: () {
+                t.cancel();
+                Navigator.of(context).pop();
+              },
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Icon(
@@ -60,14 +64,16 @@ class TimerState extends State<TimerPage> {
           ],
         ),
         actions: [
-          Padding(
-            padding:
-                EdgeInsets.only(right: MediaQuery.of(context).size.width / 5),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.75,
+            color: Colors.transparent,
             child: Center(
               child: Text(
                 widget.esercizio.substring(
                   widget.esercizio.indexOf(' '),
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     // backgroundColor: Colors.amber,
@@ -86,7 +92,7 @@ class TimerState extends State<TimerPage> {
           children: [
             AnimatedPositioned(
               duration: Duration(seconds: widget.time),
-              top: mounted ? MediaQuery.of(context).size.height : 0,
+              top: timerStarted ? MediaQuery.of(context).size.height * 0.95 : 0,
               child: Container(
                 color: Palette.primaryColor,
                 height: MediaQuery.of(context).size.height,
@@ -113,9 +119,8 @@ class TimerState extends State<TimerPage> {
   void startTimer() {
     setState(() {
       String temp = '';
-
-      int min = timer ~/ 60;
-      int sec = timer % 60;
+      int min = timer.value ~/ 60;
+      int sec = timer.value % 60;
       if (sec < 10) {
         min < 10 ? temp = '0$min:0$sec' : temp = '$min:0$sec';
       } else {
@@ -123,11 +128,16 @@ class TimerState extends State<TimerPage> {
       }
       timerText = temp;
     });
-    Timer.periodic(const Duration(seconds: 1), (t) {
+    timer.addListener(() {
+      setState(() {
+        timerStarted = true;
+      });
+    });
+    t = Timer.periodic(const Duration(seconds: 1), (t) {
       String temp = '';
-      timer > 0 ? timer -= 1 : null;
-      int min = timer ~/ 60;
-      int sec = timer % 60;
+      timer.value > 0 ? timer.value -= 1 : null;
+      int min = timer.value ~/ 60;
+      int sec = timer.value % 60;
       if (sec < 10) {
         min < 10 ? temp = '0$min:0$sec' : temp = '$min:0$sec';
       } else {
