@@ -41,8 +41,8 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
         setState(() {
           indexOnScreen = 0;
           controller.animateTo(0,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut);
+              duration: const Duration(milliseconds: 100),
+              curve: Curves.linear);
         });
       },
     );
