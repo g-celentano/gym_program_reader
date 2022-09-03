@@ -71,7 +71,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                 // color: Colors.amber,
                                 width: MediaQuery.of(context).size.width,
                                 child:
-                                    //* schermata che cambia
+//* schermata che cambia
                                     Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -141,7 +141,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                               )),
                     ),
                   ),
-                  //* icona per tornare indietro con gli esercizi
+//* icona per tornare indietro con gli esercizi
                   Positioned(
                     left: 0,
                     child: SizedBox(
@@ -174,7 +174,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                             ),
                     ),
                   ),
-                  //* timerBtn
+//* timerBtn
                   Positioned(
                       top: MediaQuery.of(context).size.height / 10,
                       left: MediaQuery.of(context).size.width / 2 -
@@ -204,7 +204,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                         : Palette.white,
                                   ),
                                 ),
-                                //* testo timer
+//* testo timer
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width / 6,
                                   child: Center(
@@ -247,7 +247,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                         ),
                       )),
 
-                  //* icona per andare avanti con gli esercizi
+//* icona per andare avanti con gli esercizi
                   Positioned(
                     right: 0,
                     child: SizedBox(

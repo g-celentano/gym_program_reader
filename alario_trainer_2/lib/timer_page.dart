@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:alario_trainer_2/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -94,7 +93,8 @@ class TimerState extends State<TimerPage> {
         child: Stack(
           children: [
             AnimatedPositioned(
-              duration: Duration(seconds: widget.time),
+              duration:
+                  timerStarted ? Duration(seconds: widget.time) : Duration.zero,
               top: timerStarted ? MediaQuery.of(context).size.height * 0.95 : 0,
               child: Container(
                 color: Palette.primaryColor,
@@ -107,12 +107,16 @@ class TimerState extends State<TimerPage> {
                 alignment: Alignment.center,
                 child: Visibility(
                   visible: !blinking,
-                  child: Text(
-                    timerText,
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.35,
-                        color:
-                            widget.isDarkMode ? Palette.white : Palette.black),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Text(
+                      timerText,
+                      style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.35,
+                          color: widget.isDarkMode
+                              ? Palette.white
+                              : Palette.black),
+                    ),
                   ),
                 ),
               ),
@@ -130,65 +134,106 @@ class TimerState extends State<TimerPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text(
-                          'Timer Avviati: $numTimer - Serie: ${widget.esercizio.substring(0, widget.esercizio.toUpperCase().indexOf('X'))} ',
-                          style: TextStyle(
-                              color: widget.isDarkMode
-                                  ? Palette.white
-                                  : Palette.black,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.07),
+                        RichText(
+                          text: TextSpan(
+                              style: TextStyle(
+                                  color: widget.isDarkMode
+                                      ? Palette.white
+                                      : Palette.black,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.07),
+                              children: [
+                                TextSpan(text: 'Timer Avviati: $numTimer '),
+                                const TextSpan(
+                                  text: '-',
+                                  style: TextStyle(fontWeight: FontWeight.w900),
+                                ),
+                                TextSpan(
+                                    text:
+                                        ' Serie: ${widget.esercizio.substring(0, widget.esercizio.toUpperCase().indexOf('X'))} ')
+                              ]),
                         ),
                         Visibility(
                           visible: optionsVisible,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      t.cancel();
-                                      blinking = false;
-                                    });
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 12)),
-                                  child: Icon(
-                                    Ionicons.stop_circle_outline,
-                                    size: 40,
-                                    color: widget.isDarkMode
-                                        ? Palette.black
-                                        : Palette.white,
-                                  )),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      if (numTimer <
-                                          int.parse(widget.esercizio.substring(
-                                              0,
-                                              widget.esercizio
-                                                  .toUpperCase()
-                                                  .indexOf('X')))) {
-                                        timerStarted = false;
-                                        numTimer++;
+                              Visibility(
+                                visible: timerStarted,
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
                                         t.cancel();
+                                        timer.value = widget.time;
+                                        String temp = '';
+                                        int min = timer.value ~/ 60;
+                                        int sec = timer.value % 60;
+                                        if (sec < 10) {
+                                          min < 10
+                                              ? temp = '0$min:0$sec'
+                                              : temp = '$min:0$sec';
+                                        } else {
+                                          min < 10
+                                              ? temp = '0$min:$sec'
+                                              : temp = '$min:$sec';
+                                        }
+                                        timerText = temp;
                                         blinking = false;
-                                        optionsVisible = false;
-                                      }
-                                    });
-                                    startTimer();
-                                  },
-                                  style: ElevatedButton.styleFrom(
+                                        timerStarted = false;
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 12)),
+                                    child: Icon(
+                                      Ionicons.stop_circle_outline,
+                                      size: 40,
+                                      color: widget.isDarkMode
+                                          ? Palette.white
+                                          : Palette.black,
+                                    )),
+                              ),
+                              Visibility(
+                                visible: !timerStarted,
+                                child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (numTimer <
+                                            int.parse(widget.esercizio
+                                                .substring(
+                                                    0,
+                                                    widget.esercizio
+                                                        .toUpperCase()
+                                                        .indexOf('X')))) {
+                                          numTimer++;
+                                          t.cancel();
+                                          blinking = false;
+                                          optionsVisible = false;
+                                          timerStarted = true;
+                                          startTimer();
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                            content:
+                                                Text('Cagn esercizij animal'),
+                                            duration:
+                                                Duration(milliseconds: 700),
+                                          ));
+                                        }
+                                      });
+                                    },
+                                    child: Container(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 12)),
-                                  child: Icon(
-                                    FeatherIcons.rotateCcw,
-                                    size: 40,
-                                    color: widget.isDarkMode
-                                        ? Palette.black
-                                        : Palette.white,
-                                  )),
+                                          horizontal: 20, vertical: 12),
+                                      child: Icon(
+                                        FeatherIcons.rotateCcw,
+                                        size: 40,
+                                        color: widget.isDarkMode
+                                            ? Palette.white
+                                            : Palette.black,
+                                      ),
+                                    )),
+                              ),
                             ],
                           ),
                         )

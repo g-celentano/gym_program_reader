@@ -152,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
               overlayColor: isDarkMode ? Palette.black : Palette.white,
               spaceBetweenChildren: 20,
               children: [
-                //* speed dial option per caricare scheda
+//* speed dial option per caricare scheda
                 SpeedDialChild(
                     label: 'Carica Scheda',
                     labelShadow: isDarkMode
@@ -200,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Ionicons.document_outline,
                       size: 30,
                     )),
-                // * speed dial option per mettere esercizio occasionale
+// * speed dial option per mettere esercizio occasionale
                 // SpeedDialChild(
                 //     label: 'Esercizio Occasionale',
                 //     labelShadow:
@@ -216,7 +216,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 //       Ionicons.barbell,
                 //       size: 30,
                 //     )),
-                //* speedial per l'aspetto
+
+//* speedial per l'aspetto
                 SpeedDialChild(
                   label: 'Aspetto',
                   labelShadow: isDarkMode
