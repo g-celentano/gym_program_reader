@@ -152,48 +152,30 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                       child: indexOnScreen > 0
                           ? Align(
                               alignment: Alignment.centerLeft,
-                              child: Stack(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        if (indexOnScreen > 0) {
-                                          longPressRight = false;
-                                          indexOnScreen -= 1;
-                                          controller.animateTo(
-                                              indexOnScreen *
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                              duration: const Duration(
-                                                  milliseconds: 200),
-                                              curve: Curves.easeInOut);
-                                        }
-                                      });
-                                    },
-                                    onLongPress: () => setState(() {
-                                      longPressLeft = true;
-                                    }),
-                                    child: const Icon(
-                                      Ionicons.chevron_back,
-                                      size: 50,
-                                      color: Palette.primaryColor,
-                                    ),
-                                  ),
-                                  AnimatedContainer(
-                                    duration: const Duration(milliseconds: 400),
-                                    color: Colors.red,
-                                    width: longPressLeft
-                                        ? MediaQuery.of(context).size.width *
-                                            0.3
-                                        : 0,
-                                    height: longPressLeft
-                                        ? MediaQuery.of(context).size.width *
-                                            0.3
-                                        : 0,
-                                    child: const Text('sx'),
-                                  )
-                                ],
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if (indexOnScreen > 0) {
+                                      longPressRight = false;
+                                      indexOnScreen -= 1;
+                                      controller.animateTo(
+                                          indexOnScreen *
+                                              MediaQuery.of(context).size.width,
+                                          duration:
+                                              const Duration(milliseconds: 200),
+                                          curve: Curves.easeInOut);
+                                    }
+                                  });
+                                },
+                                onLongPress: () => setState(() {
+                                  longPressLeft = true;
+                                  longPressRight = false;
+                                }),
+                                child: const Icon(
+                                  Ionicons.chevron_back,
+                                  size: 50,
+                                  color: Palette.primaryColor,
+                                ),
                               ),
                             )
                           : const SizedBox(
@@ -281,58 +263,195 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width / 5,
                       height: MediaQuery.of(context).size.height / 1.2,
-                      child: indexOnScreen < esercizi.length - 1
-                          ? Align(
-                              alignment: Alignment.centerRight,
-                              child: Stack(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        if (indexOnScreen <
-                                            esercizi.length - 1) {
-                                          longPressLeft = false;
-                                          indexOnScreen += 1;
-                                          controller.animateTo(
-                                              indexOnScreen *
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                              duration: const Duration(
-                                                  milliseconds: 200),
-                                              curve: Curves.easeInOut);
-                                        }
-                                      });
-                                    },
-                                    onLongPress: () => setState(() {
-                                      longPressRight = true;
-                                    }),
-                                    child: const Icon(
-                                      Ionicons.chevron_forward,
-                                      color: Palette.primaryColor,
-                                      size: 50,
-                                    ),
-                                  ),
-                                  AnimatedContainer(
-                                    duration: const Duration(milliseconds: 400),
-                                    color: Colors.red,
-                                    width: longPressRight
-                                        ? MediaQuery.of(context).size.width *
-                                            0.3
-                                        : 0,
-                                    height: longPressRight
-                                        ? MediaQuery.of(context).size.width *
-                                            0.3
-                                        : 0,
-                                    child: const Text('dx'),
-                                  )
-                                ],
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: indexOnScreen < esercizi.length - 1
+                            ? GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if (indexOnScreen < esercizi.length - 1) {
+                                      longPressLeft = false;
+                                      indexOnScreen += 1;
+                                      controller.animateTo(
+                                          indexOnScreen *
+                                              MediaQuery.of(context).size.width,
+                                          duration:
+                                              const Duration(milliseconds: 200),
+                                          curve: Curves.easeInOut);
+                                    }
+                                  });
+                                },
+                                onLongPress: () => setState(() {
+                                  longPressRight = true;
+                                  longPressLeft = false;
+                                }),
+                                child: const Icon(
+                                  Ionicons.chevron_forward,
+                                  color: Palette.primaryColor,
+                                  size: 50,
+                                ),
+                              )
+                            : const SizedBox(
+                                width: 0,
+                                height: 0,
                               ),
-                            )
-                          : const SizedBox(
-                              width: 0,
-                              height: 0,
+                      ),
+                    ),
+                  ),
+//* container per cambiare esercizio velocemente in avanti
+                  Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 400),
+                        width: longPressRight
+                            ? MediaQuery.of(context).size.width * 0.5
+                            : 0,
+                        height: MediaQuery.of(context).size.height * 0.45,
+                        decoration: BoxDecoration(
+                            color: Palette.primaryColor,
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10)),
+                            border: Border.all(width: 2)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            CloseButton(
+                              color: widget.isDarkMode
+                                  ? Palette.black
+                                  : Palette.white,
+                              onPressed: () => setState(() {
+                                longPressRight = false;
+                              }),
                             ),
+                            AnimatedOpacity(
+                              duration: longPressRight
+                                  ? const Duration(seconds: 1)
+                                  : const Duration(milliseconds: 50),
+                              opacity: longPressRight ? 1 : 0,
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.5,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.38,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: esercizi.length,
+                                    itemBuilder: (context, index) => index >
+                                            indexOnScreen
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  longPressLeft = false;
+                                                  longPressRight = false;
+                                                  indexOnScreen = index;
+                                                  controller.animateTo(
+                                                      indexOnScreen *
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      duration: const Duration(
+                                                          milliseconds: 200),
+                                                      curve: Curves.easeInOut);
+                                                });
+                                              },
+                                              child: Text(esercizi[index],
+                                                  style: TextStyle(
+                                                      fontSize: 22,
+                                                      color: widget.isDarkMode
+                                                          ? Palette.black
+                                                          : Palette.white)),
+                                            ),
+                                          )
+                                        : const SizedBox(
+                                            width: 0,
+                                            height: 0,
+                                          )),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+//* container per cambiare esercizio velocemente all'indietro
+                  Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 400),
+                        width: longPressLeft
+                            ? MediaQuery.of(context).size.width * 0.5
+                            : 0,
+                        height: MediaQuery.of(context).size.height * 0.45,
+                        decoration: BoxDecoration(
+                            color: Palette.primaryColor,
+                            borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                bottomRight: Radius.circular(10)),
+                            border: Border.all(width: 2)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CloseButton(
+                              color: widget.isDarkMode
+                                  ? Palette.black
+                                  : Palette.white,
+                              onPressed: () => setState(() {
+                                longPressLeft = false;
+                              }),
+                            ),
+                            AnimatedOpacity(
+                              duration: longPressLeft
+                                  ? const Duration(seconds: 1)
+                                  : const Duration(milliseconds: 50),
+                              opacity: longPressLeft ? 1 : 0,
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.5,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.38,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: esercizi.length,
+                                    itemBuilder: (context, index) => index <
+                                            indexOnScreen
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  longPressLeft = false;
+                                                  longPressRight = false;
+                                                  indexOnScreen = index;
+                                                  controller.animateTo(
+                                                      indexOnScreen *
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      duration: const Duration(
+                                                          milliseconds: 200),
+                                                      curve: Curves.easeInOut);
+                                                });
+                                              },
+                                              child: Text(esercizi[index],
+                                                  style: TextStyle(
+                                                      fontSize: 22,
+                                                      color: widget.isDarkMode
+                                                          ? Palette.black
+                                                          : Palette.white)),
+                                            ),
+                                          )
+                                        : const SizedBox(
+                                            width: 0,
+                                            height: 0,
+                                          )),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
