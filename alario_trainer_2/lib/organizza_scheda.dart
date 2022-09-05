@@ -26,6 +26,8 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
   List<TextEditingController> controllerNote = List.empty(growable: true);
   int indexOnScreen = 0;
   int timer = 15;
+  bool longPressLeft = false;
+  bool longPressRight = false;
 
   @override
   Widget build(BuildContext context) {
@@ -148,24 +150,50 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                       width: MediaQuery.of(context).size.width / 5,
                       height: MediaQuery.of(context).size.height / 1.2,
                       child: indexOnScreen > 0
-                          ? GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  if (indexOnScreen > 0) {
-                                    indexOnScreen -= 1;
-                                    controller.animateTo(
-                                        indexOnScreen *
-                                            MediaQuery.of(context).size.width,
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        curve: Curves.easeInOut);
-                                  }
-                                });
-                              },
-                              child: const Icon(
-                                Ionicons.chevron_back,
-                                size: 50,
-                                color: Palette.primaryColor,
+                          ? Align(
+                              alignment: Alignment.centerLeft,
+                              child: Stack(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (indexOnScreen > 0) {
+                                          longPressRight = false;
+                                          indexOnScreen -= 1;
+                                          controller.animateTo(
+                                              indexOnScreen *
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                              duration: const Duration(
+                                                  milliseconds: 200),
+                                              curve: Curves.easeInOut);
+                                        }
+                                      });
+                                    },
+                                    onLongPress: () => setState(() {
+                                      longPressLeft = true;
+                                    }),
+                                    child: const Icon(
+                                      Ionicons.chevron_back,
+                                      size: 50,
+                                      color: Palette.primaryColor,
+                                    ),
+                                  ),
+                                  AnimatedContainer(
+                                    duration: const Duration(milliseconds: 400),
+                                    color: Colors.red,
+                                    width: longPressLeft
+                                        ? MediaQuery.of(context).size.width *
+                                            0.3
+                                        : 0,
+                                    height: longPressLeft
+                                        ? MediaQuery.of(context).size.width *
+                                            0.3
+                                        : 0,
+                                    child: const Text('sx'),
+                                  )
+                                ],
                               ),
                             )
                           : const SizedBox(
@@ -254,24 +282,51 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                       width: MediaQuery.of(context).size.width / 5,
                       height: MediaQuery.of(context).size.height / 1.2,
                       child: indexOnScreen < esercizi.length - 1
-                          ? GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  if (indexOnScreen < esercizi.length - 1) {
-                                    indexOnScreen += 1;
-                                    controller.animateTo(
-                                        indexOnScreen *
-                                            MediaQuery.of(context).size.width,
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        curve: Curves.easeInOut);
-                                  }
-                                });
-                              },
-                              child: const Icon(
-                                Ionicons.chevron_forward,
-                                color: Palette.primaryColor,
-                                size: 50,
+                          ? Align(
+                              alignment: Alignment.centerRight,
+                              child: Stack(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (indexOnScreen <
+                                            esercizi.length - 1) {
+                                          longPressLeft = false;
+                                          indexOnScreen += 1;
+                                          controller.animateTo(
+                                              indexOnScreen *
+                                                  MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                              duration: const Duration(
+                                                  milliseconds: 200),
+                                              curve: Curves.easeInOut);
+                                        }
+                                      });
+                                    },
+                                    onLongPress: () => setState(() {
+                                      longPressRight = true;
+                                    }),
+                                    child: const Icon(
+                                      Ionicons.chevron_forward,
+                                      color: Palette.primaryColor,
+                                      size: 50,
+                                    ),
+                                  ),
+                                  AnimatedContainer(
+                                    duration: const Duration(milliseconds: 400),
+                                    color: Colors.red,
+                                    width: longPressRight
+                                        ? MediaQuery.of(context).size.width *
+                                            0.3
+                                        : 0,
+                                    height: longPressRight
+                                        ? MediaQuery.of(context).size.width *
+                                            0.3
+                                        : 0,
+                                    child: const Text('dx'),
+                                  )
+                                ],
                               ),
                             )
                           : const SizedBox(

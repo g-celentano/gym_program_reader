@@ -24,6 +24,7 @@ class TimerState extends State<TimerPage> {
   bool blinking = false;
   bool optionsVisible = false;
   int numTimer = 1;
+  int serie = 0;
   String timerText = '';
   ValueNotifier<int> timer = ValueNotifier(0);
   late Timer t;
@@ -36,6 +37,8 @@ class TimerState extends State<TimerPage> {
 
   @override
   Widget build(BuildContext context) {
+    serie = int.parse(widget.esercizio
+        .substring(0, widget.esercizio.toUpperCase().indexOf('X')));
     return Scaffold(
       appBar: AppBar(
         leadingWidth: MediaQuery.of(context).size.width * 0.25,
@@ -109,13 +112,15 @@ class TimerState extends State<TimerPage> {
                   visible: !blinking,
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    child: Text(
-                      timerText,
-                      style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.35,
-                          color: widget.isDarkMode
-                              ? Palette.white
-                              : Palette.black),
+                    child: Center(
+                      child: Text(
+                        timerText,
+                        style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.35,
+                            color: widget.isDarkMode
+                                ? Palette.white
+                                : Palette.black),
+                      ),
                     ),
                   ),
                 ),
@@ -196,43 +201,42 @@ class TimerState extends State<TimerPage> {
                               Visibility(
                                 visible: !timerStarted,
                                 child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        if (numTimer <
-                                            int.parse(widget.esercizio
-                                                .substring(
-                                                    0,
-                                                    widget.esercizio
-                                                        .toUpperCase()
-                                                        .indexOf('X')))) {
-                                          numTimer++;
-                                          t.cancel();
-                                          blinking = false;
-                                          optionsVisible = false;
-                                          timerStarted = true;
-                                          startTimer();
-                                        } else {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(
-                                            content:
-                                                Text('Cagn esercizij animal'),
-                                            duration:
-                                                Duration(milliseconds: 700),
-                                          ));
-                                        }
-                                      });
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 12),
-                                      child: Icon(
-                                        FeatherIcons.rotateCcw,
-                                        size: 40,
-                                        color: widget.isDarkMode
-                                            ? Palette.white
-                                            : Palette.black,
-                                      ),
-                                    )),
+                                  onTap: () {
+                                    setState(() {
+                                      if (numTimer < serie) {
+                                        numTimer++;
+                                        t.cancel();
+                                        blinking = false;
+                                        optionsVisible = false;
+                                        timerStarted = true;
+                                        startTimer();
+                                      }
+                                    });
+                                  },
+                                  child: numTimer < serie
+                                      ? Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 12),
+                                          child: Icon(
+                                            FeatherIcons.rotateCcw,
+                                            size: 40,
+                                            color: widget.isDarkMode
+                                                ? Palette.white
+                                                : Palette.black,
+                                          ),
+                                        )
+                                      : Text(
+                                          'Esericizo finito',
+                                          style: TextStyle(
+                                              color: widget.isDarkMode
+                                                  ? Palette.white
+                                                  : Palette.black,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.04),
+                                        ),
+                                ),
                               ),
                             ],
                           ),
