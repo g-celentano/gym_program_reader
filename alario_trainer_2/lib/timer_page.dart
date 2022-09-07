@@ -21,6 +21,8 @@ class TimerPage extends StatefulWidget {
 
 class TimerState extends State<TimerPage> {
   bool timerStarted = false;
+  bool timerEnded = false;
+  bool firstExec = true;
   bool blinking = false;
   bool optionsVisible = false;
   int numTimer = 1;
@@ -31,6 +33,7 @@ class TimerState extends State<TimerPage> {
 
   @override
   void initState() {
+    firstExec = true;
     startTimer();
     super.initState();
   }
@@ -110,18 +113,12 @@ class TimerState extends State<TimerPage> {
                 alignment: Alignment.center,
                 child: Visibility(
                   visible: !blinking,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Center(
-                      child: Text(
-                        timerText,
-                        style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.35,
-                            color: widget.isDarkMode
-                                ? Palette.white
-                                : Palette.black),
-                      ),
-                    ),
+                  child: Text(
+                    timerText,
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.33,
+                        color:
+                            widget.isDarkMode ? Palette.white : Palette.black),
                   ),
                 ),
               ),
@@ -158,88 +155,88 @@ class TimerState extends State<TimerPage> {
                                         ' Serie: ${widget.esercizio.substring(0, widget.esercizio.toUpperCase().indexOf('X'))} ')
                               ]),
                         ),
-                        Visibility(
-                          visible: optionsVisible,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Visibility(
-                                visible: timerStarted,
-                                child: ElevatedButton(
-                                    onPressed: () {
+                        SizedBox(
+                          // color: Colors.red,
+                          child: timerStarted
+                              ? Opacity(
+                                  opacity: timerEnded ? 1 : 0,
+                                  child: ElevatedButton(
+                                      onPressed: timerEnded
+                                          ? () {
+                                              setState(() {
+                                                t.cancel();
+                                                timer.value = widget.time;
+                                                String temp = '';
+                                                int min = timer.value ~/ 60;
+                                                int sec = timer.value % 60;
+                                                if (sec < 10) {
+                                                  min < 10
+                                                      ? temp = '0$min:0$sec'
+                                                      : temp = '$min:0$sec';
+                                                } else {
+                                                  min < 10
+                                                      ? temp = '0$min:$sec'
+                                                      : temp = '$min:$sec';
+                                                }
+                                                timerText = temp;
+                                                blinking = false;
+                                                timerStarted = false;
+                                                timerEnded = false;
+                                              });
+                                            }
+                                          : () {},
+                                      style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 12)),
+                                      child: Icon(
+                                        Ionicons.stop_circle_outline,
+                                        size: 40,
+                                        color: widget.isDarkMode
+                                            ? Palette.white
+                                            : Palette.black,
+                                      )),
+                                )
+                              : Opacity(
+                                  opacity: firstExec ? 0 : 1,
+                                  child: GestureDetector(
+                                    onTap: () {
                                       setState(() {
-                                        t.cancel();
-                                        timer.value = widget.time;
-                                        String temp = '';
-                                        int min = timer.value ~/ 60;
-                                        int sec = timer.value % 60;
-                                        if (sec < 10) {
-                                          min < 10
-                                              ? temp = '0$min:0$sec'
-                                              : temp = '$min:0$sec';
-                                        } else {
-                                          min < 10
-                                              ? temp = '0$min:$sec'
-                                              : temp = '$min:$sec';
+                                        if (numTimer < serie) {
+                                          numTimer++;
+                                          t.cancel();
+                                          blinking = false;
+                                          optionsVisible = false;
+                                          timerStarted = true;
+                                          timerEnded = false;
+                                          startTimer();
                                         }
-                                        timerText = temp;
-                                        blinking = false;
-                                        timerStarted = false;
                                       });
                                     },
-                                    style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20, vertical: 12)),
-                                    child: Icon(
-                                      Ionicons.stop_circle_outline,
-                                      size: 40,
-                                      color: widget.isDarkMode
-                                          ? Palette.white
-                                          : Palette.black,
-                                    )),
-                              ),
-                              Visibility(
-                                visible: !timerStarted,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if (numTimer < serie) {
-                                        numTimer++;
-                                        t.cancel();
-                                        blinking = false;
-                                        optionsVisible = false;
-                                        timerStarted = true;
-                                        startTimer();
-                                      }
-                                    });
-                                  },
-                                  child: numTimer < serie
-                                      ? Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 12),
-                                          child: Icon(
-                                            FeatherIcons.rotateCcw,
-                                            size: 40,
-                                            color: widget.isDarkMode
-                                                ? Palette.white
-                                                : Palette.black,
-                                          ),
-                                        )
-                                      : Text(
-                                          'Esericizo finito',
-                                          style: TextStyle(
+                                    child: numTimer < serie
+                                        ? Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 12),
+                                            child: Icon(
+                                              FeatherIcons.rotateCcw,
+                                              size: 40,
                                               color: widget.isDarkMode
                                                   ? Palette.white
                                                   : Palette.black,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.04),
-                                        ),
+                                            ),
+                                          )
+                                        : Text(
+                                            'Esericizo finito',
+                                            style: TextStyle(
+                                                color: widget.isDarkMode
+                                                    ? Palette.white
+                                                    : Palette.black,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.04),
+                                          ),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
                         )
                       ],
                     ),
@@ -269,6 +266,8 @@ class TimerState extends State<TimerPage> {
     timer.addListener(() {
       setState(() {
         timerStarted = true;
+        firstExec = false;
+        timerEnded = false;
       });
     });
     t = Timer.periodic(const Duration(seconds: 1), (timerTimer) {
@@ -287,6 +286,7 @@ class TimerState extends State<TimerPage> {
       if (timerText == '00:00') {
         t.cancel();
         optionsVisible = true;
+        timerEnded = true;
         t = Timer.periodic(
             const Duration(milliseconds: 200),
             (timer) => setState(() {

@@ -314,65 +314,70 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                 topLeft: Radius.circular(10),
                                 bottomLeft: Radius.circular(10)),
                             border: Border.all(width: 2)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            CloseButton(
-                              color: widget.isDarkMode
-                                  ? Palette.black
-                                  : Palette.white,
-                              onPressed: () => setState(() {
-                                longPressRight = false;
-                              }),
-                            ),
-                            AnimatedOpacity(
-                              duration: longPressRight
-                                  ? const Duration(seconds: 1)
-                                  : const Duration(milliseconds: 50),
-                              opacity: longPressRight ? 1 : 0,
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.5,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.38,
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: esercizi.length,
-                                    itemBuilder: (context, index) => index >
-                                            indexOnScreen
-                                        ? Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  longPressLeft = false;
-                                                  longPressRight = false;
-                                                  indexOnScreen = index;
-                                                  controller.animateTo(
-                                                      indexOnScreen *
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                      duration: const Duration(
-                                                          milliseconds: 200),
-                                                      curve: Curves.easeInOut);
-                                                });
-                                              },
-                                              child: Text(esercizi[index],
-                                                  style: TextStyle(
-                                                      fontSize: 22,
-                                                      color: widget.isDarkMode
-                                                          ? Palette.black
-                                                          : Palette.white)),
-                                            ),
-                                          )
-                                        : const SizedBox(
-                                            width: 0,
-                                            height: 0,
-                                          )),
-                              ),
-                            ),
-                          ],
-                        ),
+                        child: AnimatedOpacity(
+                            duration: longPressRight
+                                ? const Duration(seconds: 1)
+                                : const Duration(milliseconds: 50),
+                            opacity: longPressRight ? 1 : 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                CloseButton(
+                                  color: widget.isDarkMode
+                                      ? Palette.black
+                                      : Palette.white,
+                                  onPressed: () => setState(() {
+                                    longPressRight = false;
+                                  }),
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.38,
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: esercizi.length,
+                                      itemBuilder: (context, index) => index >
+                                              indexOnScreen
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    longPressLeft = false;
+                                                    longPressRight = false;
+                                                    indexOnScreen = index;
+                                                    controller.animateTo(
+                                                        indexOnScreen *
+                                                            MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width,
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    200),
+                                                        curve:
+                                                            Curves.easeInOut);
+                                                  });
+                                                },
+                                                child: Text(esercizi[index],
+                                                    style: TextStyle(
+                                                        fontSize: 22,
+                                                        color: widget.isDarkMode
+                                                            ? Palette.black
+                                                            : Palette.white)),
+                                              ),
+                                            )
+                                          : const SizedBox(
+                                              width: 0,
+                                              height: 0,
+                                            )),
+                                ),
+                              ],
+                            )),
                       ),
                     ),
                   ),
@@ -392,65 +397,70 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                 topRight: Radius.circular(10),
                                 bottomRight: Radius.circular(10)),
                             border: Border.all(width: 2)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CloseButton(
-                              color: widget.isDarkMode
-                                  ? Palette.black
-                                  : Palette.white,
-                              onPressed: () => setState(() {
-                                longPressLeft = false;
-                              }),
-                            ),
-                            AnimatedOpacity(
-                              duration: longPressLeft
-                                  ? const Duration(seconds: 1)
-                                  : const Duration(milliseconds: 50),
-                              opacity: longPressLeft ? 1 : 0,
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.5,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.38,
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: esercizi.length,
-                                    itemBuilder: (context, index) => index <
-                                            indexOnScreen
-                                        ? Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  longPressLeft = false;
-                                                  longPressRight = false;
-                                                  indexOnScreen = index;
-                                                  controller.animateTo(
-                                                      indexOnScreen *
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                      duration: const Duration(
-                                                          milliseconds: 200),
-                                                      curve: Curves.easeInOut);
-                                                });
-                                              },
-                                              child: Text(esercizi[index],
-                                                  style: TextStyle(
-                                                      fontSize: 22,
-                                                      color: widget.isDarkMode
-                                                          ? Palette.black
-                                                          : Palette.white)),
-                                            ),
-                                          )
-                                        : const SizedBox(
-                                            width: 0,
-                                            height: 0,
-                                          )),
-                              ),
-                            ),
-                          ],
-                        ),
+                        child: AnimatedOpacity(
+                            duration: longPressLeft
+                                ? const Duration(seconds: 1)
+                                : const Duration(milliseconds: 50),
+                            opacity: longPressLeft ? 1 : 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CloseButton(
+                                  color: widget.isDarkMode
+                                      ? Palette.black
+                                      : Palette.white,
+                                  onPressed: () => setState(() {
+                                    longPressLeft = false;
+                                  }),
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.38,
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: esercizi.length,
+                                      itemBuilder: (context, index) => index <
+                                              indexOnScreen
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    longPressLeft = false;
+                                                    longPressRight = false;
+                                                    indexOnScreen = index;
+                                                    controller.animateTo(
+                                                        indexOnScreen *
+                                                            MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width,
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    200),
+                                                        curve:
+                                                            Curves.easeInOut);
+                                                  });
+                                                },
+                                                child: Text(esercizi[index],
+                                                    style: TextStyle(
+                                                        fontSize: 22,
+                                                        color: widget.isDarkMode
+                                                            ? Palette.black
+                                                            : Palette.white)),
+                                              ),
+                                            )
+                                          : const SizedBox(
+                                              width: 0,
+                                              height: 0,
+                                            )),
+                                ),
+                              ],
+                            )),
                       ),
                     ),
                   ),
