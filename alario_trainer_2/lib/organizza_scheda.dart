@@ -1,7 +1,10 @@
 // import 'dart:io';
+import 'dart:io';
+
 import 'package:alario_trainer_2/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:path_provider/path_provider.dart';
 import 'timer_page.dart';
 
 class OrganizzaScehda extends StatefulWidget {
@@ -28,6 +31,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
   int timer = 15;
   bool longPressLeft = false;
   bool longPressRight = false;
+  List<String> giorni = ['A', 'B', 'C', 'D', 'E', 'F'];
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +54,9 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
     );
 
     return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height / 1.2,
@@ -97,6 +103,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                         ),
                                       ),
                                     ),
+//* container text field per le note
                                     Container(
                                       decoration: BoxDecoration(
                                           color: Colors.transparent,
@@ -143,7 +150,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                               )),
                     ),
                   ),
-//* icona per tornare indietro con gli esercizi
+//* prev exercise icon
                   Positioned(
                     left: 0,
                     child: SizedBox(
@@ -202,6 +209,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
+//* minus icon
                                 GestureDetector(
                                   onTap: () => setState(() {
                                     timer > 15 ? timer -= 15 : null;
@@ -226,6 +234,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                                 : Palette.white)),
                                   ),
                                 ),
+//*plus icon
                                 GestureDetector(
                                   onTap: () => setState(() {
                                     timer < 600 ? timer += 15 : null;
@@ -236,6 +245,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                                           ? Palette.black
                                           : Palette.white),
                                 ),
+//* play icon
                                 GestureDetector(
                                   onTap: () => Navigator.of(context)
                                       .push(MaterialPageRoute(
@@ -256,8 +266,31 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                           ),
                         ),
                       )),
+//* save notes button
+                  Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).size.height * 0.12),
+                        width: MediaQuery.of(context).size.width * 0.65,
+                        height: MediaQuery.of(context).size.height * 0.07,
+                        child: ElevatedButton(
+                          onPressed: saveCarichi,
+                          child: Text(
+                            'Salva Note',
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: widget.isDarkMode
+                                    ? Palette.black
+                                    : Palette.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
 
-//* icona per andare avanti con gli esercizi
+//* next exercise icon
                   Positioned(
                     right: 0,
                     child: SizedBox(
@@ -298,7 +331,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                       ),
                     ),
                   ),
-//* container per cambiare esercizio velocemente in avanti
+//* container per cambiare esercizio velocemente all'indietro
                   Positioned.fill(
                     child: Align(
                       alignment: Alignment.centerRight,
@@ -478,13 +511,23 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
     );
   }
 
-  // void saveCarichi() async {
-  //   Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
-  //   String appDocumentsPath = appDocumentsDirectory.path;
-  //   String filePath = '$appDocumentsPath/${esercizi[indexOnScreen]}.txt';
-  //   File file = File(filePath);
-  //   String saveableContent = '';
-  // }
+  void saveCarichi() async {
+    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    String appDocumentsPath = appDocumentsDirectory.path;
+    String filePath =
+        '$appDocumentsPath/Giorno${giorni[widget.selectedDay.value]}${esercizi[indexOnScreen].replaceAll(' ', '')}.txt';
+    // print(filePath);
+    File file = File(filePath);
+    String saveableContent = controllerNote[indexOnScreen].text;
+
+    saveableContent.isNotEmpty
+        ? await file.writeAsString(saveableContent).then((value) =>
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Note Salvate'),
+              duration: Duration(milliseconds: 700),
+            )))
+        : null;
+  }
 
   String _getTimerText() {
     String temp = '';
@@ -500,5 +543,13 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
       }
     }
     return temp;
+  }
+
+  void caricaNote(String nomeFile) async {
+    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    String appDocumentsPath = appDocumentsDirectory.path;
+    String filePath = '$appDocumentsPath/Giorno$nomeFile.txt';
+    File file = File(filePath);
+    controllerNote[indexOnScreen].text = await file.readAsString();
   }
 }
