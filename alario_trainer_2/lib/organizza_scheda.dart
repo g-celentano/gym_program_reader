@@ -1,4 +1,5 @@
 // import 'dart:io';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:alario_trainer_2/palette.dart';
@@ -34,6 +35,12 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
   List<String> giorni = ['A', 'B', 'C', 'D', 'E', 'F'];
 
   @override
+  void initState() {
+    getNote('Giorno${giorni[0]}');
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     esercizi = widget.allenamento
         .where((element) =>
@@ -46,9 +53,15 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
       () {
         setState(() {
           indexOnScreen = 0;
+          for (TextEditingController v in controllerNote) {
+            v.text = '';
+          }
+
           controller.animateTo(0,
               duration: const Duration(milliseconds: 100),
               curve: Curves.linear);
+
+          getNote(giorni[widget.selectedDay.value]);
         });
       },
     );
@@ -76,7 +89,6 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                           itemCount: esercizi.length,
                           shrinkWrap: true,
                           itemBuilder: (context, index) => SizedBox(
-                                // color: Colors.amber,
                                 width: MediaQuery.of(context).size.width,
                                 child:
 //* schermata che cambia
@@ -276,7 +288,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                         width: MediaQuery.of(context).size.width * 0.65,
                         height: MediaQuery.of(context).size.height * 0.07,
                         child: ElevatedButton(
-                          onPressed: saveCarichi,
+                          onPressed: saveNote,
                           child: Text(
                             'Salva Note',
                             style: TextStyle(
@@ -336,7 +348,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 400),
+                        duration: const Duration(milliseconds: 300),
                         width: longPressRight
                             ? MediaQuery.of(context).size.width * 0.5
                             : 0,
@@ -419,7 +431,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 400),
+                        duration: const Duration(milliseconds: 300),
                         width: longPressLeft
                             ? MediaQuery.of(context).size.width * 0.5
                             : 0,
@@ -511,7 +523,7 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
     );
   }
 
-  void saveCarichi() async {
+  void saveNote() async {
     Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
     String appDocumentsPath = appDocumentsDirectory.path;
     String filePath =
@@ -545,11 +557,25 @@ class OrganizzaScehdaState extends State<OrganizzaScehda> {
     return temp;
   }
 
-  void caricaNote(String nomeFile) async {
+//! funziona per ora, non nel migliore dei modi
+//! potrebbe essere piu` fluido
+  void getNote(String giorno) async {
     Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
-    String appDocumentsPath = appDocumentsDirectory.path;
-    String filePath = '$appDocumentsPath/Giorno$nomeFile.txt';
-    File file = File(filePath);
-    controllerNote[indexOnScreen].text = await file.readAsString();
+    List<File> note = List.empty(growable: true);
+    // String appDocumentsPath = appDocumentsDirectory.path;
+    await for (var entity
+        in appDocumentsDirectory.list(recursive: true, followLinks: false)) {
+      if (entity.path.contains('Giorno$giorno')) {
+        note.add(entity as File);
+      }
+    }
+    for (String ese in esercizi) {
+      for (var file in note) {
+        if (file.toString().contains(ese.replaceAll(' ', ''))) {
+          controllerNote[esercizi.indexOf(ese)].text =
+              await file.readAsString(encoding: latin1);
+        }
+      }
+    }
   }
 }
