@@ -18,10 +18,11 @@ class GymProgramRepository {
 
   Future<List<GymProgram>> readPrograms(File file) async {
     List<GymProgram> programs = List.empty(growable: true);
-
+    List<String> separators = ["GIORNO", "DAY", "PROGRAM"];
     List<String> content = await file.readAsLines(encoding: latin1);
     List<String> days = content
-        .where((element) => element.toUpperCase().contains('GIORNO'))
+        .where((element) =>
+            separators.contains(element.toUpperCase().split(' ').first))
         .toList();
     List<List<String>> workouts = List.empty(growable: true);
 
