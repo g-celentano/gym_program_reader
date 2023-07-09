@@ -1,21 +1,21 @@
 # Gym Program Reader
 Flutter project made to learn the Flutter environment.
-At the moment it's able to read gym programs in this format:
+At the moment it's able to read gym programs in this format froma '.txt' file:
 ```
 DAY A
-Exercise_Name Series
-Exercise_Name Series
-Exercise_Name Series
+Series Exercise_Name
+Series Exercise_Name
+Series Exercise_Name
 
 DAY B
-Exercise_Name Series
-Exercise_Name Series
-Exercise_Name Series
+Series Exercise_Name
+Series Exercise_Name
+Series Exercise_Name
 
 DAY C
-Exercise_Name Series
-Exercise_Name Series
-Exercise_Name Series
+Series Exercise_Name
+Series Exercise_Name
+Series Exercise_Name
 
 ...
 ```
