@@ -1,6 +1,6 @@
 # Gym Program Reader
 Flutter project made to learn the Flutter environment.
-At the moment it's able to read gym programs in this format froma '.txt' file:
+At the moment it's able to read gym programs in this format '.txt' file:
 ```
 DAY A
 Series Exercise_Name
@@ -19,8 +19,8 @@ Series Exercise_Name
 
 ...
 ```
-Willing to add a smart way to understand different-written gym programs.
-Made this project to try and learn some Flutter and Dart, while simultaneously applying MVMM pattern, in order to understand it and how to apply it.
+Willing to add a smart way to understand different-written gym programs.<br>
+Made this project to try and learn some Flutter and Dart, while simultaneously applying MVMM pattern, in order to understand it and understand how to apply it.<br>
 Other than this, I got also to play around with animations (the timer animation).
 
 ### Some screenshots from the application:
