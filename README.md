@@ -1,4 +1,6 @@
 # Gym Program Reader
 
-This is my go-to project when I want to learn something new.
-In the **Flutter_Version**, there's a try of learning MVVM Pattern using Provider.
+This a repo for my go-to project for when I want to learn something new.
+Content:
+
+- Flutter_Version: App version made in Flutter to learn flutter and MVVM pattern (using Provider)
